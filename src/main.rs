@@ -1,9 +1,11 @@
 extern crate rand;
 use rand::distributions::{ IndependentSample, Range };
-use rand::{ Rng };
+use rand::{ Rand, Rng };
 
 fn main() {
-    let series = emit_series(rand::weak_rng(), Range::new(1, 21))
+    let mut rng = rand::weak_rng();
+    let range = Range::new(1u32, 21u32);
+    let series = random_series(|| { range.ind_sample(&mut rng) })
         .take(10)
         .filter(|n| n & 1 == 0);
 
@@ -12,6 +14,6 @@ fn main() {
     }
 }
 
-fn emit_series<'a, R: Rng + 'a>(mut rng: R, range: Range<u32>) -> Box<Iterator<Item=u32> + 'a> {
-    Box::new((0..).map(move |_| range.ind_sample(&mut rng)))
+fn random_series<'f, T: Rand, F: Fn() -> T + 'f>(f: F) -> Box<Iterator<Item=T> + 'f> {
+    Box::new((0..).map(move |_| f()))
 }
