@@ -3,9 +3,8 @@ use rand::distributions::{ IndependentSample, Range };
 use rand::{ Rand };
 
 fn main() {
-    let mut rng = rand::weak_rng();
     let range = Range::new(1u32, 21u32);
-    let series = random_series(|| range.ind_sample(&mut rng))
+    let series = random_series(|| range.ind_sample(&mut rand::thread_rng()))
         .take(10)
         .filter(|n| n & 1 == 0);
 
